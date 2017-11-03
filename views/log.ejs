@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Stackoverflow tracker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/4f4ff1acc8.js"></script>
+</head>
+<style>
+    body {
+        background-image: url(http://www.microsoft.com/library/media/1033/windowsvista/images/wv_home_bkgnd_photo.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /*background: #eee;*/
+        width: 1060px;
+        margin: 50px auto;
+    }
+
+    .container {
+        padding-left: 0px;
+        padding-right: 0px;
+        width: 1060px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        border: 1px solid black;
+    }
+
+    .scrollingTable {
+        width: 100%;
+        overflow-y: auto;
+    }
+</style>
+<script type="text/javascript">
+    function makeTableScroll() {
+        // Constant retrieved from server-side via JSP
+        var maxRows = 8;
+
+        var table = document.getElementById('myTable');
+        var wrapper = table.parentNode;
+        var rowsInTable = table.rows.length;
+        var height = 0;
+        if (rowsInTable > maxRows) {
+            for (var i = 0; i < maxRows; i++) {
+                height += table.rows[i].clientHeight;
+            }
+            wrapper.style.height = height + "px";
+        }
+    }
+</script>
+<body onload="makeTableScroll()">
+<div class="container">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" style="float:right;"><img height=30 width=50 style="float:left;"
+                                                                  src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-icon.svg?v=6e4af45f4d66">Assignment
+                    1</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/profile">Profile</a></li>
+                <li class="active"><a href="/getLog">Your Logs</a></li>
+                <li><a href="/myVisualization">Dashboard</a></li>
+
+            </ul>
+            <button class="btn btn-danger navbar-btn">
+                <a href="https://stackoverflow.com/questions/tagged/java?sort=frequent&pageSize=15" target="_blank">Stack
+                    Overflow</a>
+            </button>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a><span class="fa fa-user-circle"></span> <strong>User: <%= userId %></strong></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header text-center">
+        <h1><span class="fa fa-file-code-o"></span> StackOverflow Logs </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+
+
+            <div class="well">
+                <h3><span class="fa fa-tasks"></span> User Activity</h3>
+
+
+                <ul class="list-group">
+                    <div class="scrollingTable">
+                        <table class="table" id="myTable">
+                            <thead>
+                            <tr class="thead-inverse">
+                                <th align="left">Time Stamp</th>
+                                <th align="center">Activity</th>
+                                <th align="right">Behaviour</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% for (var i = 0; i < data.length; i++) { %>
+                            <tr>
+                                <td><%= data[i].dateTime %></td>
+                                <td><%= data[i].data %></td>
+                                <td><%= data[i].type %></td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </ul>
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
+
+

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Stackoverflow tracker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/4f4ff1acc8.js"></script>
+</head>
+<style>
+    body {
+        background-image: url(http://www.microsoft.com/library/media/1033/windowsvista/images/wv_home_bkgnd_photo.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /*background: #eee;*/
+        width: 1060px;
+        margin: 50px auto;
+    }
+
+    .container {
+        padding-left: 0px;
+        padding-right: 0px;
+        width: 1060px;
+    }
+
+    path {
+        stroke: #fff;
+    }
+
+    path:hover {
+        opacity: 0.9;
+    }
+
+    rect:hover {
+        fill: blue;
+    }
+
+    .axis {
+        font: 10px sans-serif;
+    }
+
+    .legend tr {
+        border-bottom: 1px solid grey;
+    }
+
+    .legend tr:first-child {
+        border-top: 1px solid grey;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+        display: none;
+    }
+
+    .legend {
+        border-collapse: collapse;
+        border-spacing: 0px;
+    }
+
+    .legend td {
+        padding: 4px 5px;
+        vertical-align: bottom;
+    }
+
+    .legendFreq, .legendPerc {
+        align: right;
+        width: 50px;
+    }
+
+</style>
+<body>
+<div class="container">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" style="float:right;"><img height=30 width=50 style="float:left;"
+                                                                  src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-icon.svg?v=6e4af45f4d66">Assignment
+                    1</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/getLog">Your Logs</a></li>
+                <li class="active"><a href="/getDashboard">Visualizations</a></li>
+
+            </ul>
+            <button class="btn btn-danger navbar-btn">
+                <a href="https://stackoverflow.com/questions/tagged/java?sort=frequent&pageSize=15" target="_blank">Stack
+                    Overflow</a>
+            </button>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a><span class="fa fa-user-circle"></span> <strong>User: <%= userId %></strong></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header text-center">
+        <h1><span class="fa fa-file-code-o"></span> Adaptive Web: StackOverFlow User Behavior </h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+
+            <div class="well">
+
+                <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation"><a href="/myVisualization">Day-to-Day</a>
+                    <li role="presentation"><a href="/groupVisualization">Comparison</a></li>
+                    <li role="presentation" class="active"><a href="/myVisualization">Dashboard</a></li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="well">
+                <h3></span> Compare Behaviors With Other Users</h3>
+                <div id='dashboard'>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="well">
+                    <h3></span> Why these Interactions?</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            PIE CHART: Graph for % and Number of Interactions by the user.
+                            BAR CHART: Showing number of interactions by the users
+                        </li>
+                        <li class="list-group-item">
+                            Actions covered: All the behavior Interactions.
+                        </li>
+
+                        <li class="list-group-item">
+                            From the PIE CHART we can know following things
+                            <ul>
+                                <li>Number of events done by that user.</li>
+                                <li>Percentage of that events done by the user.</li>
+                                <li>What activity has user preferred</li>
+                            </ul>
+                            <br>
+                            From the BAR CHART we can know following things
+                            <ul>
+                                <li>Comparative Number of those events done by the users.</li>
+                                <li>Total Number of that particular activity by all the users</li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item">
+                            Interactions
+                            <ul>
+                                <li>Hover to see the exact data on the pie chart as well as the bar chart</li>
+                                <li>Click on the PIE CHART to see the number that interactions performed by all Users on
+                                    BAR CHART
+                                </li>
+                                <li>Click on the BAR CHART to see the number and percentage of all interactions
+                                    performed by that User on PIE CHART
+                                </li>
+                                <li>Click on the radio button to change graphs</li>
+                            </ul>
+
+                        <li class="list-group-item">
+                            Steps to find results
+                            <ul>
+                                <li>Hover over the pie chart to get exact counter as well as read the percentage and
+                                    number in the legend for that color
+                                </li>
+                                <li>Look for the event that covers maximum portion and look at legend to know which
+                                    event is that
+                                </li>
+                                <li>You can also look at percentage to know answers</li>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item">Post
+                            Why does it matter?
+                            <ul>
+                                <li>We can know which event is most important for the user and optimize the application
+                                    in that way
+                                </li>
+                                <li>We can also know from here if there is any anomaly</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+    function dashboard(id, fData) {
+        var barColor = 'steelblue';
+
+        function segColor(c) {
+            return {
+                Mouse_Movement: "#9E0041",
+                Copy: "#C32F4B",
+                Change_Page: "#E1514B",
+                Code_Click: "#F47245",
+                Comment_Click: "#FB9F59",
+                Post_Answer: "#FEC574",
+                Post_Question: "#FAE38C",
+                Question_Link: "#EAF195",
+                Tag_Click: "#C7E89E",
+                Unbookmark: "#9CD6A4",
+                Bookmark: "#6CC4A4",
+                Suggest_Edit: "#4D9DB4",
+                Downvote: "#4776B4",
+                Upvote: "#5E4EA1",
+            }[c];
+        }
+
+        // compute total for each state.
+        fData.forEach(function (d) {
+            d.total = d.data.Bookmark + d.data.Change_Page + d.data.Code_Click + d.data.Comment_Click + d.data.Copy + d.data.Downvote + d.data.Mouse_Movement + d.data.Post_Answer + d.data.Post_Question + d.data.Question_Link + d.data.Suggest_Edit + d.data.Tag_Click + d.data.Unbookmark + d.data.Upvote;
+        });
+
+        // function to handle histogram.
+        function histoGram(fD) {
+            var hG = {}, hGDim = {t: 60, r: 0, b: 30, l: 0};
+            hGDim.w = 500 - hGDim.l - hGDim.r;
+            hGDim.h = 300 - hGDim.t - hGDim.b;
+
+            //create svg for histogram.
+            var hGsvg = d3.select(id).append("svg")
+                .attr("width", hGDim.w + hGDim.l + hGDim.r)
+                .attr("height", hGDim.h + hGDim.t + hGDim.b).append("g")
+                .attr("transform", "translate(" + hGDim.l + "," + hGDim.t + ")");
+
+            // create function for x-axis mapping.
+            var x = d3.scale.ordinal().rangeRoundBands([0, hGDim.w], 0.1)
+                .domain(fD.map(function (d) {
+                    return d[0];
+                }));
+
+            // Add x-axis to the histogram svg.
+            hGsvg.append("g").attr("class", "x axis")
+                .attr("transform", "translate(0," + hGDim.h + ")")
+                .call(d3.svg.axis().scale(x).orient("bottom"));
+
+            // Create function for y-axis map.
+            var y = d3.scale.linear().range([hGDim.h, 0])
+                .domain([0, d3.max(fD, function (d) {
+                    return d[1];
+                })]);
+
+            var tooltip = d3.select("body")
+                .append("div")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("visibility", "hidden")
+                .text("a simple tooltip");
+
+            // Create bars for histogram to contain rectangles and data labels.
+            var bars = hGsvg.selectAll(".bar").data(fD).enter()
+                .append("g").attr("class", "bar");
+
+            //create the rectangles.
+            bars.append("rect")
+                .attr("x", function (d) {
+                    return x(d[0]);
+                })
+                .attr("y", function (d) {
+                    return y(d[1]);
+                })
+                .attr("width", x.rangeBand())
+                .attr("height", function (d) {
+                    return hGDim.h - y(d[1]);
+                })
+                .attr('fill', barColor)
+                .on("click", onclick);// mouseover is defined below.
+//                .on("mouseout", mouseout);// mouseout is defined below.
+
+            //Create the frequency labels above the rectangles.
+            bars.append("text").text(function (d) {
+                return d3.format(",")(d[1])
+            })
+                .attr("x", function (d) {
+                    return x(d[0]) + x.rangeBand() / 2;
+                })
+                .attr("y", function (d) {
+                    return y(d[1]) - 5;
+                })
+                .attr("text-anchor", "middle");
+
+            function onclick(d) {  // utility function to be called on mouseover.
+                // filter for selected state.
+                var st = fData.filter(function (s) {
+                        return s.userId == d[0];
+                    })[0],
+                    nD = d3.keys(st.data).map(function (s) {
+                        return {type: s, data: st.data[s]};
+                    });
+
+                // call update functions of pie-chart and legend.
+                pC.update(nD);
+                leg.update(nD);
+            }
+
+            function mouseout(d) {    // utility function to be called on mouseout.
+                // reset the pie-chart and legend.
+                pC.update(tF);
+                leg.update(tF);
+            }
+
+            // create function to update the bars. This will be used by pie-chart.
+            hG.update = function (nD, color) {
+                // update the domain of the y-axis map to reflect change in frequencies.
+                y.domain([0, d3.max(nD, function (d) {
+                    return d[1];
+                })]);
+
+                // Attach the new data to the bars.
+                var bars = hGsvg.selectAll(".bar").data(nD);
+
+                // transition the height and color of rectangles.
+                bars.select("rect").transition().duration(500)
+                    .attr("y", function (d) {
+                        return y(d[1]);
+                    })
+                    .attr("height", function (d) {
+                        return hGDim.h - y(d[1]);
+                    })
+                    .attr("fill", color);
+
+                // transition the frequency labels location and change value.
+                bars.select("text").transition().duration(500)
+                    .text(function (d) {
+                        return d3.format(",")(d[1])
+                    })
+                    .attr("y", function (d) {
+                        return y(d[1]) - 5;
+                    });
+            }
+            return hG;
+        }
+
+        // function to handle pieChart.
+        function pieChart(pD) {
+            var pC = {}, pieDim = {w: 250, h: 250};
+            pieDim.r = Math.min(pieDim.w, pieDim.h) / 2;
+
+            // create svg for pie chart.
+            var piesvg = d3.select(id).append("svg")
+                .attr("width", pieDim.w).attr("height", pieDim.h).append("g")
+                .attr("transform", "translate(" + pieDim.w / 2 + "," + pieDim.h / 2 + ")");
+
+            // create function to draw the arcs of the pie slices.
+            var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
+
+            // create a function to compute the pie slice angles.
+            var pie = d3.layout.pie().sort(null).value(function (d) {
+                return d.data;
+            });
+
+            var tooltip = d3.select("body")
+                .append("div")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("visibility", "hidden")
+                .text("a simple tooltip" + 10);
+
+            // Draw the pie slices.
+            piesvg.selectAll("path").data(pie(pD)).enter().append("path").attr("d", arc)
+                .each(function (d) {
+                    this._current = d;
+                })
+                .style("fill", function (d) {
+                    return segColor(d.data.type);
+                })
+                .on("click", onclick)
+                .on("mouseover", function(){return tooltip.style("visibility", "visible");})
+                .on("mousemove", function(d){return tooltip.html(d.data.type+"  "+d.data.data).style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+                .on("mouseout",mouseout);
+
+            // create function to update pie-chart. This will be used by histogram.
+            pC.update = function (nD) {
+                piesvg.selectAll("path").data(pie(nD)).transition().duration(500)
+                    .attrTween("d", arcTween);
+            }
+
+            // Utility function to be called on mouseover a pie slice.
+            function onclick(d) {
+                // call the update function of histogram with new data.
+                hG.update(fData.map(function (v) {
+                    return [v.userId, v.data[d.data.type]];
+                }), segColor(d.data.type));
+            }
+
+            //Utility function to be called on mouseout a pie slice.
+            function mouseout(d) {
+                // call the update function of histogram with all data.
+                hG.update(fData.map(function (v) {
+                    return [v.userId, v.total];
+                }), barColor);
+                return tooltip.style("visibility", "hidden");
+
+            }
+
+            // Animating the pie-slice requiring a custom function which specifies
+            // how the intermediate paths should be drawn.
+            function arcTween(a) {
+                var i = d3.interpolate(this._current, a);
+                this._current = i(0);
+                return function (t) {
+                    return arc(i(t));
+                };
+            }
+
+            return pC;
+        }
+
+        // function to handle legend.
+        function legend(lD) {
+            var leg = {};
+
+            // create table for legend.
+            var legend = d3.select(id).append("table").attr('class', 'legend');
+
+            // create one row per segment.
+            var tr = legend.append("tbody").selectAll("tr").data(lD).enter().append("tr");
+
+            // create the first column for each segment.
+            tr.append("td").append("svg").attr("width", '16').attr("height", '16').append("rect")
+                .attr("width", '16').attr("height", '16')
+                .attr("fill", function (d) {
+                    return segColor(d.type);
+                });
+
+            // create the second column for each segment.
+            tr.append("td").text(function (d) {
+                return d.type;
+            });
+
+            // create the third column for each segment.
+            tr.append("td").attr("class", 'legendFreq')
+                .text(function (d) {
+                    return d3.format(",")(d.data);
+                });
+
+            // create the fourth column for each segment.
+            tr.append("td").attr("class", 'legendPerc')
+                .text(function (d) {
+                    return getLegend(d, lD);
+                });
+
+            // Utility function to be used to update the legend.
+            leg.update = function (nD) {
+                // update the data attached to the row elements.
+                var l = legend.select("tbody").selectAll("tr").data(nD);
+
+                // update the frequencies.
+                l.select(".legendFreq").text(function (d) {
+                    return d3.format(",")(d.data);
+                });
+
+                // update the percentage column.
+                l.select(".legendPerc").text(function (d) {
+                    return getLegend(d, nD);
+                });
+            }
+
+            function getLegend(d, aD) { // Utility function to compute percentage.
+                return d3.format("%")(d.data / d3.sum(aD.map(function (v) {
+                    return v.data;
+                })));
+            }
+
+            return leg;
+        }
+
+        // calculate total frequency by segment for all state.
+        var tF = ['Mouse_Movement', 'Copy', 'Change_Page', 'Code_Click', 'Comment_Click', 'Post_Answer', 'Post_Question', 'Question_Link', 'Tag_Click', 'Unbookmark', 'Bookmark', 'Suggest_Edit', 'Downvote', 'Upvote'].map(function (d) {
+            return {
+                type: d, data: d3.sum(fData.map(function (t) {
+                    return t.data[d];
+                }))
+            };
+        });
+
+        // calculate total frequency by state for all segment.
+        var sF = fData.map(function (d) {
+            return [d.userId, d.total];
+        });
+
+        var hG = histoGram(sF), // create the histogram.
+            pC = pieChart(tF), // create the pie-chart.
+            leg = legend(tF);  // create the legend.
+    }
+</script>
+
+<script>
+    userName = [];
+    unique_activities = [];
+    total_useractivity = {};
+    total_uniqueactivity = {};
+    users = [];
+    <% for (var i = data.length - 1; i > 0 ; i--) { %>
+    userId = "<%= data[i].userId %>";
+    activity = "<%= data[i].data %>"
+
+    <!-- -->
+
+    if (userName.indexOf(userId) >= 0) {
+        user_activity = users[userId];
+        index_of_activity = user_activity.indexOf(activity);
+        if (index_of_activity >= 0) {
+            users[userId][index_of_activity + 1] += 1;
+        }
+        else {
+            users[userId].push(activity, 1);
+        }
+    }
+    else {
+        total_useractivity[userId] = 0;
+        userName.push(userId);
+        var x = [activity, 1];
+        users[userId] = x;
+    }
+    total_useractivity[userId] += 1;
+
+    if (unique_activities.indexOf(activity) >= 0) {
+
+    }
+    else {
+        total_uniqueactivity[activity] = 0;
+        unique_activities.push(activity);
+
+    }
+    total_uniqueactivity[activity] += 1;
+
+    <% } %>
+
+    <!-- -->
+    var abc = [];
+    for (var key in total_useractivity) {
+        a = {"name": key, "value": total_useractivity[key]};
+        abc.push(a);
+    }
+    console.log(users);
+    var freqData = [];
+    for (var key in users) {
+        user_activity = users[key];
+        Upvote_index = users[key].indexOf("Upvote");
+        Downvote_index = users[key].indexOf("Downvote");
+        Suggest_Edit_index = users[key].indexOf("Suggest_Edit");
+        Bookmark_index = users[key].indexOf("Bookmark");
+        Unbookmark_index = users[key].indexOf("Unbookmark");
+        Tag_Click_index = users[key].indexOf("Tag_Click");
+        Question_Link_index = users[key].indexOf("Question_Link");
+        Post_Question_index = users[key].indexOf("Post_Question");
+        Post_Answer_index = users[key].indexOf("Post_Answer");
+        Comment_Click_index = users[key].indexOf("Comment_Click");
+        Code_Click_index = users[key].indexOf("Code_Click");
+        Change_Page_index = users[key].indexOf("Change_Page");
+        Copy_index = users[key].indexOf("Copy");
+        Mouse_Movement_index = users[key].indexOf("Mouse_Movement");
+
+        if (Upvote_index >= 0)
+            Upvote_value = users[key][Upvote_index + 1];
+        else
+            Upvote_value = 0;
+        if (Downvote_index >= 0)
+            Downvote_value = users[key][Downvote_index + 1];
+        else
+            Downvote_value = 0;
+        if (Suggest_Edit_index >= 0)
+            Suggest_Edit_value = users[key][Suggest_Edit_index + 1];
+        else
+            Suggest_Edit_value = 0;
+        if (Bookmark_index >= 0)
+            Bookmark_value = users[key][Bookmark_index + 1];
+        else
+            Bookmark_value = 0;
+        if (Unbookmark_index >= 0)
+            Unbookmark_value = users[key][Unbookmark_index + 1];
+        else
+            Unbookmark_value = 0;
+        if (Tag_Click_index >= 0)
+            Tag_Click_value = users[key][Tag_Click_index + 1];
+        else
+            Tag_Click_value = 0;
+        if (Question_Link_index >= 0)
+            Question_Link_value = users[key][Question_Link_index + 1];
+        else
+            Question_Link_value = 0;
+        if (Post_Question_index >= 0)
+            Post_Question_value = users[key][Post_Question_index + 1];
+        else
+            Post_Question_value = 0;
+        if (Post_Answer_index >= 0)
+            Post_Answer_value = users[key][Post_Answer_index + 1];
+        else
+            Post_Answer_value = 0;
+        if (Comment_Click_index >= 0)
+            Comment_Click_value = users[key][Comment_Click_index + 1];
+        else
+            Comment_Click_value = 0;
+        if (Code_Click_index >= 0)
+            Code_Click_value = users[key][Code_Click_index + 1];
+        else
+            Code_Click_value = 0;
+        if (Change_Page_index >= 0)
+            Change_Page_value = users[key][Change_Page_index + 1];
+        else
+            Change_Page_value = 0;
+        if (Copy_index >= 0)
+            Copy_value = users[key][Copy_index + 1];
+        else
+            Copy_value = 0;
+        if (Mouse_Movement_index >= 0)
+            Mouse_Movement_value = users[key][Mouse_Movement_index + 1];
+        else
+            Mouse_Movement_value = 0;
+
+        user_log =
+            {
+                userId: key, data:
+                {
+                    Mouse_Movement: Mouse_Movement_value,
+                    Copy: Copy_value,
+                    Change_Page: Change_Page_value,
+                    Code_Click: Code_Click_value,
+                    Comment_Click: Comment_Click_value,
+                    Post_Answer: Post_Answer_value,
+                    Post_Question: Post_Question_value,
+                    Question_Link: Question_Link_value,
+                    Tag_Click: Tag_Click_value,
+                    Unbookmark: Unbookmark_value,
+                    Bookmark: Bookmark_value,
+                    Suggest_Edit: Suggest_Edit_value,
+                    Downvote: Downvote_value,
+                    Upvote: Upvote_value
+                }
+            };
+        lenght_Data = freqData.length;
+        freqData[lenght_Data] = user_log;
+    }
+    console.log(freqData);
+    dashboard('#dashboard', freqData);
+</script>

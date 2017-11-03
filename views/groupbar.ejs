@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Stackoverflow tracker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/4f4ff1acc8.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+</head>
+<style>
+    body {
+        background-image: url(http://www.microsoft.com/library/media/1033/windowsvista/images/wv_home_bkgnd_photo.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /*background: #eee;*/
+        width: 1060px;
+        margin: 50px auto;
+    }
+
+    .container {
+        padding-left: 0px;
+        padding-right: 0px;
+        width: 1060px;
+    }
+
+    path {
+        stroke: #fff;
+    }
+
+    path:hover {
+        opacity: 0.9;
+    }
+
+    rect:hover {
+        fill: blue;
+    }
+
+    .axis {
+        font: 10px sans-serif;
+    }
+
+    .legend tr {
+        border-bottom: 1px solid grey;
+    }
+
+    .legend tr:first-child {
+        border-top: 1px solid grey;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+        display: none;
+    }
+
+    .legend {
+        margin-bottom: 76px;
+        display: inline-block;
+        border-collapse: collapse;
+        border-spacing: 0px;
+    }
+
+    .legend td {
+        padding: 4px 5px;
+        vertical-align: bottom;
+    }
+
+    .legendFreq, .legendPerc {
+        align: right;
+        width: 50px;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .bar {
+        fill: orange;
+    }
+
+    .bar:hover {
+        fill: orangered;
+    }
+
+    .x.axis path {
+        display: none;
+    }
+
+    .d3-tip {
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 2px;
+    }
+
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 10px;
+        width: 100%;
+        line-height: 1;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+    }
+
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+        margin: -1px 0 0 0;
+        top: 100%;
+        left: 0;
+    }
+
+    svg {
+        position: center;
+    }
+
+    text {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .toolTip {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        position: absolute;
+        display: none;
+        width: auto;
+        height: auto;
+        background: none repeat scroll 0 0 white;
+        border: 0 none;
+        border-radius: 8px 8px 8px 8px;
+        box-shadow: -3px 3px 15px #888888;
+        color: black;
+        font: 12px sans-serif;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .legend {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 60%;
+    }
+
+    rect {
+        stroke-width: 2;
+    }
+
+    text {
+        font: 10px sans-serif;
+    }
+
+    .axis text {
+        font: 10px sans-serif;
+    }
+
+    .axis path {
+        fill: none;
+        stroke: #000;
+    }
+
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .axis .tick line {
+        stroke-width: 1;
+        stroke: rgba(0, 0, 0, 0.2);
+    }
+
+    .axisHorizontal path {
+        fill: none;
+    }
+
+    .axisHorizontal line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .axisHorizontal .tick line {
+        stroke-width: 1;
+        stroke: rgba(0, 0, 0, 0.2);
+    }
+
+    .bar {
+        fill: steelblue;
+        fill-opacity: .9;
+    }
+
+    .x.axis path {
+        display: none;
+    }
+
+    .none {
+        display: none;
+
+    }
+
+</style>
+
+<body>
+<div class="container">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" style="float:right;"><img height=30 width=50 style="float:left;"
+                                                                  src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-icon.svg?v=6e4af45f4d66">Assignment
+                    1</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Profile</a></li>
+                <li><a href="/getLog">Your Logs</a></li>
+                <li><a href="/myVisualization">Visualizations</a></li>
+
+            </ul>
+            <button class="btn btn-danger navbar-btn">
+                <a href="https://stackoverflow.com/questions/tagged/java?sort=frequent&pageSize=15" target="_blank">Stack
+                    Overflow</a>
+            </button>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a><span class="fa fa-user-circle"></span> <strong>User: <%= userId %></strong></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header text-center">
+        <h1><span class="fa fa-file-code-o"></span> Adaptive Web: StackOverFlow User Behavior </h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-2">
+
+            <div class="well">
+
+                <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation"><a href="/myVisualization">Day-to-Day</a>
+                    <li role="presentation" class="active"><a href="/groupVisualization">Comparison</a></li>
+                    <li role="presentation"><a href="/getDashboard">Dashboard</a></li>
+                </ul>
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="well">
+                <h3></span> Number of Interactions By Day!</h3>
+                <input type="radio" name='thing' value='valuable' data-id="groupBar" checked> My Daily Interactions</input>
+                <input type="radio" name='thing' value='valuable' data-id="bar"> All users Daily Interactions</input>
+                <div id='bar'>
+                </div>
+                <div id='groupBar' class="none">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="well">
+                <h3></span> Explanation</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        BAR CHART: Showing number of interactions by the all the users by day.
+                    </li>
+                    <li class="list-group-item">
+                        Actions covered: All the behavior Interactions.
+                    </li>
+
+                    <li class="list-group-item">
+                        From the BAR CHART we can know following things
+                        <ul>
+                            <li>Number of events done by that user on that date.</li>
+                            <li>Compare the behavior events of the users on that particular day.
+                            <li>Comparative Number of those events done by the user on day-to-day basis.</li>
+                        </ul>
+                        <br>
+                    </li>
+                    <li class="list-group-item">
+                        Interactions
+                        <ul>
+                            <li>Hover to see the exact number of interaction on that date</li>
+                            <li>Click on the radio button to change graphs</li>
+                            <li>On Graph change the user can see either his own data per day basis, or compare his data with all users logged in the days</li>
+                            <li>Look at the legend for the color of the bar and the user name.</li>
+                        </ul>
+
+                    <li class="list-group-item">
+                        Steps to find results
+                        <ul>
+                            <li>Hover over the Bar chart to get exact counter.
+                            </li>
+                            <li>Hover over the Chart to get the user name</li>
+                            <li>Look for the event that covers maximum portion and which date the user has used more.
+                            </li>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        Why does it matter?
+                        <ul>
+                            <li>We can know which date the which user sat down to work/search </li>
+                            <li>We can also know from here if there is any anomaly</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(':radio').change(function (event) {
+        var id = $(this).data('id');
+        $('#' + id).addClass('none').siblings().removeClass('none');
+    });
+</script>
+<script>
+    function barchart(id, users, unique_dates, total_uniquedates) {
+        user = "<%= userId %>";
+        console.log(users[user]);
+        user_date = users[user];
+        var x = [];
+        var y = [];
+        var barColor = 'steelblue';
+        var d = [];
+        for (var i = 0; i < unique_dates.length + 2; i++) {
+            x.push(user_date[i]);
+            y.push(user_date[i + 1]);
+
+            var p = {letter: user_date[i], frequency: user_date[i + 1]}
+            d.push(p);
+            i++;
+        }
+        console.log(x);
+        console.log(y);
+        console.log(d);
+
+        var margin = {top: 40, right: 20, bottom: 30, left: 40},
+            width = 540 - margin.left - margin.right,
+            height = 360 - margin.top - margin.bottom;
+
+        var formatPercent = d3.format("");
+
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, (width * 2 / 3)], .1);
+
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(formatPercent);
+
+        var tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .offset([-10, 0])
+            .html(function (d) {
+                return "<strong>Frequency:</strong> <span style='color:red'>" + d.frequency + "</span>";
+            })
+
+        var svg = d3.select("#bar").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.call(tip);
+        x.domain(d.map(function (d) {
+            return d.letter;
+        }));
+        y.domain([0, d3.max(d, function (d) {
+            return d.frequency;
+        })]);
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 2)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Interactions");
+
+        svg.selectAll(".bar")
+            .data(d)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function (d) {
+                return x(d.letter);
+            })
+            .attr("width", x.rangeBand())
+            .attr("y", function (d) {
+                return y(d.frequency);
+            })
+            .attr("height", function (d) {
+                return height - y(d.frequency);
+            })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide)
+
+    }
+</script>
+<script>
+    function group_bar(dataset) {
+
+        console.log(dataset);
+        var margin = {top: 40, right: 20, bottom: 30, left: 40},
+            width = 540 - margin.left - margin.right,
+            height = 360 - margin.top - margin.bottom;
+
+        console.log(margin);
+        console.log(width);
+        console.log(height);
+        var x0 = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .1);
+
+        var x1 = d3.scale.ordinal();
+
+        var y = d3.scale.linear()
+            .range([height, 0]);
+
+        var colorRange = d3.scale.category20();
+        var color = d3.scale.ordinal()
+            .range(colorRange.range());
+
+        var xAxis = d3.svg.axis()
+            .scale(x0)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(d3.format(".2s"));
+
+        var divTooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+
+        var svg = d3.select("#groupBar").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+//        dataset = [
+//            {label: "Men", "Not Satisfied": 20, "Not Much Satisfied": 10, "Satisfied": 50, "Very Satisfied": 20},
+//            {label: "Women", "Not Satisfied": 15, "Not Much Satisfied": 30, "Satisfied": 40, "Very Satisfied": 15}
+//        ];
+
+
+        var options = d3.keys(dataset[0]).filter(function (key) {
+            return key !== "label";
+        });
+        dataset.forEach(function (d) {
+            d.valores = options.map(function (name) {
+                return {name: name, value: +d[name]};
+            });
+        });
+
+        x0.domain(dataset.map(function (d) {
+            return d.label;
+        }));
+
+        x1.domain(options).rangeRoundBands([0, x0.rangeBand()]);
+        y.domain([0, d3.max(dataset, function (d) {
+            return d3.max(d.valores, function (d) {
+                return d.value;
+            });
+        })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Interactions");
+
+        var bar = svg.selectAll(".bar")
+            .data(dataset)
+            .enter().append("g")
+            .attr("class", "rect")
+            .attr("transform", function (d) {
+                return "translate(" + x0(d.label) + ",0)";
+            });
+
+        bar.selectAll("rect")
+            .data(function (d) {
+                return d.valores;
+            })
+            .enter().append("rect")
+            .attr("width", x1.rangeBand())
+            .attr("x", function (d) {
+                return x1(d.name);
+            })
+            .attr("y", function (d) {
+                return y(d.value);
+            })
+            .attr("value", function (d) {
+                return d.name;
+            })
+            .attr("height", function (d) {
+                return height - y(d.value);
+            })
+            .style("fill", function (d) {
+                return color(d.name);
+            });
+
+        bar
+            .on("mousemove", function (d) {
+                divTooltip.style("left", d3.event.pageX + 10 + "px");
+                divTooltip.style("top", d3.event.pageY - 25 + "px");
+                divTooltip.style("display", "inline-block");
+                var x = d3.event.pageX, y = d3.event.pageY
+                var elements = document.querySelectorAll(':hover');
+                l = elements.length
+                l = l - 1
+                elementData = elements[l].__data__
+                divTooltip.html((d.label) + "<br>" + elementData.name + "<br>" + elementData.value);
+            });
+        bar
+            .on("mouseout", function (d) {
+                divTooltip.style("display", "none");
+            });
+
+
+        var legend = svg.selectAll(".legend")
+            .data(options.slice())
+            .enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", function (d, i) {
+                return "translate(0," + i * 20 + ")";
+            });
+
+        legend.append("rect")
+            .attr("x", width - 18)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", color);
+
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function (d) {
+                return d;
+            });
+    }
+</script>
+
+<script>
+    userName = [];
+    unique_dates = [];
+    total_userdates = {};
+    total_uniquedates = {};
+    users = [];
+    <% for (var i = data.length - 1; i > 0 ; i--) { %>
+    userId = "<%= data[i].userId %>";
+    activity = "<%= data[i].data %>"
+    date = "<%= data[i].dateTime %>";
+    //    console.log(typeof (date));
+    //    console.log(date.slice(0,10));
+    date = date.slice(0, 10);
+    //    console.log(date);
+    //    console.log(userId);
+    <!-- -->
+
+    if (userName.indexOf(userId) >= 0) {
+        user_date = users[userId];
+        index_of_date = user_date.indexOf(date);
+        if (index_of_date >= 0) {
+            users[userId][index_of_date + 1] += 1;
+        }
+        else {
+            users[userId].push(date, 1);
+        }
+    }
+    else {
+        total_userdates[userId] = 0;
+        userName.push(userId);
+        var x = [date, 1];
+        users[userId] = x;
+    }
+    total_userdates[userId] += 1;
+
+    if (unique_dates.indexOf(date) >= 0) {
+
+    }
+    else {
+        total_uniquedates[date] = 0;
+        unique_dates.push(date);
+
+    }
+    total_uniquedates[date] += 1;
+
+    <% } %>
+    console.log(total_uniquedates);
+    console.log(unique_dates);
+    console.log(users);
+    <!-- -->
+
+    var freqData = [];
+
+    for (var key in users) {
+//        console.log(users[key]);
+        u_key = users[key];
+        for (var i = 0; i < unique_dates.length; i++) {
+            if (u_key.indexOf(unique_dates[i]) < 0) {
+                var p = unique_dates[i];
+                u_key.push(p, 0);
+            }
+//            console.log(u_key[unique_dates[i]]);
+        }
+    }
+
+    for (var key in users) {
+        u_key = users[key];
+        for (var i = 0; i < unique_dates.length; i++) {
+            if (u_key.indexOf(unique_dates[i]) < 0) {
+                var p = unique_dates[i];
+                u_key.push(p, 0);
+            }
+//            console.log(u_key[unique_dates[i]]);
+        }
+    }
+    console.log(users);
+    dataset = [];
+    for (var i = 0; i < unique_dates.length; i++) {
+        var data = {};
+        var json = {"label": unique_dates[i]};
+//        json.push("label",unique_dates[i]);
+        for (var key in users) {
+            var user_id = key;
+            var u_key = users[key];
+            var index = u_key.indexOf(unique_dates[i]);
+            var value = u_key[index + 1];
+            json[user_id] = value;
+        }
+        dataset.push(json);
+    }
+    console.log("Group bar");
+    console.log(dataset);
+    barchart('#bar', users, unique_dates, total_uniquedates);
+    group_bar(dataset);
+</script>
+
+</body>

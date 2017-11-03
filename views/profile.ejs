@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Stackoverflow tracker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://use.fontawesome.com/4f4ff1acc8.js"></script>
+</head>
+<style>
+    body {
+        background-image: url(http://www.microsoft.com/library/media/1033/windowsvista/images/wv_home_bkgnd_photo.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        /*background: #eee;*/
+        width: 1060px;
+        margin: 50px auto;
+    }
+
+    .container {
+        padding-left: 0px;
+        padding-right: 0px;
+        width: 1060px;
+    }
+
+    a:link {
+        text-decoration: none;
+    }
+
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .scrollingTable {
+        width: 100%;
+        overflow-y: auto;
+    }
+</style>
+<script type="text/javascript">
+    function makeTableScroll() {
+        var maxRows = 5;
+        var table = document.getElementById('myTable');
+        var wrapper = table.parentNode;
+        var rowsInTable = table.rows.length;
+        var height = 0;
+        if (rowsInTable > maxRows) {
+            for (var i = 0; i < maxRows; i++) {
+                height += table.rows[i].clientHeight;
+            }
+            wrapper.style.height = height + "px";
+        }
+    }
+</script>
+<body onload="makeTableScroll()">
+<div class="container">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" style="float:right;"><img height=30 width=50 style="float:left;"
+                                                                  src="https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-icon.svg?v=6e4af45f4d66">Assignment
+                    1</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Profile</a></li>
+                <li><a href="/getLog">Your Logs</a></li>
+                <li><a href="/myVisualization">Visualizations</a></li>
+                <!--<li><a href = "/lu"</li>-->
+
+            </ul>
+            <button class="btn btn-danger navbar-btn">
+                <a href="https://stackoverflow.com/questions/tagged/java?sort=frequent&pageSize=15" target="_blank">Stack
+                    Overflow</a>
+            </button>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a><span class="fa fa-user-circle"></span> <strong>User: <%= user.local.email %></strong></a></li>
+                <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header text-center">
+        <h1><span class="fa fa-file-code-o"></span> Adaptive Web: StackOverFlow User Behavior </h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+
+            <div class="well">
+                <h3><span class="fa fa-user-circle"></span>User <strong>"<%= user.local.email %>"</strong>.
+                    <br>Your Previous Logins</h3>
+                <h3> Time Stamp</h3>
+                <div class="scrollingTable">
+                    <table class="table" id="myTable">
+                        <ul class="list-group">
+
+                            <tbody>
+                            <% for (var i = user.loginHistory.length - 1 ; i >= 0; i--) { %>
+                            <tr>
+                                <td>
+                                    <li class="list-group-item"><%= user.loginHistory[i] %></li>
+                                </td>
+                            </tr>
+                            <% } %>
+                            </tbody>
+                        </ul>
+
+                    </table>
+                </div>
+                </p>
+
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="well">
+                <h3></span> Why log these actions?</h3>
+                <ul class="list-group">
+                    <li class="list-group-item"><i class="fa fa-mouse-pointer fa-2x" aria-hidden="true"> </i>
+                        Click on question - Track the user interest in the questions.
+                    </li>
+                    <li class="list-group-item"><i class="fa fa-tags fa-2x" aria-hidden="true"></i>
+                        Select tags - Topics which interest the user.
+                    </li>
+
+                    <li class="list-group-item"><i class="fa fa-long-arrow-up fa-2x" aria-hidden="true"> </i><i
+                                class="fa fa-long-arrow-down fa-2x" aria-hidden="true"></i>
+                        Upvote Downvote questions - User view about the questions.
+                        views.
+                    </li>
+                    <li class="list-group-item"><i class="fa fa-long-arrow-up fa-2x" aria-hidden="true"> </i><i
+                                class="fa fa-long-arrow-down fa-2x" aria-hidden="true"></i>
+                        Upvote Downvote answers - User view about the answers.
+                    </li>
+                    <li class="list-group-item"><i class="fa fa-star fa-2x" aria-hidden="true"></i>
+                        Bookmark Unbookmark questions - User favourites in the topic.
+                    </li>
+                    <li class="list-group-item"><i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i></i>Post
+                        Questions - Inclination to topics of the questoins the user is inquistive about.
+                    </li>
+                    <li class="list-group-item"><i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i></i>Post
+                        answers - Inclination to topics of the answers user attempts.
+                    </li>
+                    <li class="list-group-item"><i class="fa fa-keyboard-o fa-2x" aria-hidden="true"> </i>Post comments
+                        - Analyse the reasoning or view of the user.
+                    </li>
+                </ul>
+                <ul class="list-group">
+                    <li class="list-group-item"> Bonus Question</li>
+                    <li class="list-group-item"><i class="fa fa-clone fa-2x" aria-hidden="true"></i>Copy answers - To
+                        track if the user has something on his clipboard from Stack overflow for his use.
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
+
+
